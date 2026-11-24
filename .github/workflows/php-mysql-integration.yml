@@ -1,0 +1,70 @@
+name: PHP and MySQL Integration Tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: hospital_management
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql
+      - name: Install MySQL client and curl
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client curl
+      - name: Create application database
+        run: |
+          mkdir -p config
+          cat > config/database.php <<'PHP'
+          <?php
+          return [
+            'host' => '127.0.0.1',
+            'database' => 'hospital_management',
+            'username' => 'root',
+            'password' => 'test',
+            'charset' => 'utf8mb4',
+          ];
+          PHP
+          mysql -h127.0.0.1 -uroot -ptest < database/schema.sql
+      - name: Seed fictional test records
+        run: |
+          mysql -h127.0.0.1 -uroot -ptest hospital_management <<'SQL'
+          INSERT INTO staff_users(name,email,password_hash,role)
+          VALUES('CI Test Admin','ci-admin@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'admin');
+          INSERT INTO patients(full_name,phone,gender) VALUES('CI Fictional Patient','0000000000','Prefer not to say');
+          INSERT INTO doctors(full_name,specialty) VALUES('CI Test Doctor','General Medicine');
+          SQL
+      - name: Start PHP development server
+        run: |
+          php -S 127.0.0.1:8080 -t public > /tmp/caredesk-php.log 2>&1 &
+          echo $! > /tmp/caredesk-php.pid
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8080/login.php >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/caredesk-php.log
+          exit 1
+      - name: Verify login and application pages
+        run: bash tests/http-smoke-test.sh
+      - name: Show PHP server log on failure
+        if: failure()
+        run: cat /tmp/caredesk-php.log
