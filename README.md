@@ -1,45 +1,51 @@
 # Online Medical & Hospital Management System
 
-A PHP and MySQL web application demonstrating routine hospital administration workflows: patient registration, doctor directory, appointments, medical notes, invoices, payments, and summary reporting.
+A PHP and MySQL web application demonstrating common hospital administration workflows: patient registration, doctor directory, appointments, medical descriptions/visit notes, billing, payment status, and summary reporting.
 
 > **Portfolio/demo project.** This is a learning application, not a certified Electronic Health Record (EHR), medical device, accounting system, or production-ready hospital platform. Use fictional data only. Do not enter real patient information.
 
-## Features
-- Session-based staff login and logout.
-- Dashboard with patient, doctor, appointment, and billing summaries.
-- Patient registration and searchable patient list.
-- Doctor directory.
-- Appointment scheduling with status tracking.
+## Implemented modules
+- Staff login/logout with password hashing and PHP sessions.
+- Dashboard with patient, doctor, appointment, and outstanding-invoice counts.
+- Patient registration and patient directory.
+- Doctor directory with specialty information.
+- Appointment scheduling linking patients and doctors.
 - Medical description/visit notes linked to a patient and doctor.
-- Invoice creation with line-item description, amount, and payment status.
-- Basic administration reports.
-- MySQL persistence using PDO prepared statements.
-- CSRF protection on write forms, output escaping, and password hashing.
+- Invoice creation with service description and amount in INR.
+- Mark-pending-invoice-as-paid action.
+- Reports showing record counts and paid/pending invoice totals.
+- MySQL persistence through PDO prepared statements.
+- CSRF tokens on write forms and HTML output escaping.
 
 ## Technology
 PHP 8.1+, MySQL 8.0+/MariaDB, PDO, HTML5, CSS3.
 
 ## Run locally
 1. Install PHP 8.1+ with PDO MySQL and MySQL/MariaDB.
-2. Create a database and import `database/schema.sql`.
+2. Import `database/schema.sql` into MySQL.
 3. Copy `config/database.example.php` to `config/database.php` and set local credentials.
 4. From the project root, run `php -S 127.0.0.1:8000 -t public`.
-5. Visit `http://127.0.0.1:8000/setup.php` once to create a demo staff account. Delete or disable `public/setup.php` after setup.
-6. Sign in using the credentials displayed by the setup page and change the password immediately.
+5. Visit `http://127.0.0.1:8000/setup.php` once to create a demo staff account.
+6. Save the generated password, then delete or disable `public/setup.php`.
+7. Visit `http://127.0.0.1:8000` and sign in.
 
-## Project structure
-- `public/` — web entry points and pages.
-- `app/` — shared authentication, security, and layout helpers.
-- `config/` — local database configuration template.
-- `database/` — schema and demo seed data.
-- `docs/` — architecture and operational notes.
+## Repository structure
+- `app/` — shared database bootstrap, session, CSRF, and layout helpers.
+- `config/` — database configuration template.
+- `database/` — MySQL schema.
+- `docs/` — architecture notes.
+- `public/` — login and application modules.
 - `tests/` — manual verification checklist.
+- `.github/workflows/` — PHP syntax validation workflow.
 
-## Security notes
+## Verification
+A GitHub Actions workflow is configured to run PHP syntax checks on pushes and pull requests. Runtime behavior still requires testing in a PHP/MySQL environment. No successful workflow run, live deployment, or database execution is claimed until verified.
+
+## Security and limitations
 - Never commit `config/database.php`, real credentials, or real patient data.
-- Use HTTPS, strong unique passwords, least-privilege database credentials, backups, access logging, and a security review before any real deployment.
-- The included demo setup account is for local testing only.
-- This project does not claim compliance with any healthcare privacy regulation.
+- The demo setup account is for local testing only.
+- This project is not intended for real patient records or payment processing.
+- Before production use, add role/record-level authorization, audit logs, HTTPS, secret management, encrypted backups, retention controls, dependency review, and independent security/privacy assessment.
+- This repository does not claim compliance with any healthcare privacy regulation.
 
-## Verification status
-Source files and schema are provided for local setup. Runtime behavior must be verified in a PHP/MySQL environment; no live deployment or database execution is claimed by this repository initialization.
+See [SECURITY.md](SECURITY.md), [architecture](docs/architecture.md), and [manual test plan](tests/manual-test-plan.md).
