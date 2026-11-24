@@ -1,0 +1,11 @@
+<?php
+require __DIR__ . '/../app/bootstrap.php'; require_login();
+if ($_SERVER['REQUEST_METHOD']==='POST') { verify_csrf(); $p=(int)($_POST['patient_id']??0); $d=(int)($_POST['doctor_id']??0); $dt=$_POST['appointment_date']??''; $note=trim((string)($_POST['reason']??'')); if(!$p||!$d||!$dt) flash('Patient, doctor, and date are required.','error'); else { $s=$pdo->prepare('INSERT INTO appointments(patient_id,doctor_id,appointment_date,reason) VALUES(?,?,?,?)'); $s->execute([$p,$d,$dt,$note?:null]); flash('Appointment scheduled.'); } header('Location: appointments.php'); exit; }
+page_start('Appointments'); show_flash();
+$patients=$pdo->query('SELECT id,full_name FROM patients ORDER BY full_name')->fetchAll(); $doctors=$pdo->query('SELECT id,full_name FROM doctors ORDER BY full_name')->fetchAll();
+echo '<section class="panel"><h2>Schedule appointment</h2>';
+if(!$patients||!$doctors) echo '<p>Add at least one patient and one doctor before scheduling.</p>';
+else { echo '<form method="post" class="form-grid"><input type="hidden" name="csrf" value="'.e(csrf_token()).'"><label>Patient<select name="patient_id" required>'; foreach($patients as $p) echo '<option value="'.(int)$p['id'].'">'.e($p['full_name']).'</option>'; echo '</select></label><label>Doctor<select name="doctor_id" required>'; foreach($doctors as $d) echo '<option value="'.(int)$d['id'].'">'.e($d['full_name']).'</option>'; echo '</select></label><label>Date and time<input type="datetime-local" name="appointment_date" required></label><label>Reason / description<input name="reason" maxlength="255"></label><button>Save appointment</button></form>'; }
+echo '</section>';
+$rows=$pdo->query('SELECT a.*,p.full_name patient,d.full_name doctor FROM appointments a JOIN patients p ON p.id=a.patient_id JOIN doctors d ON d.id=a.doctor_id ORDER BY appointment_date DESC')->fetchAll();
+echo '<section class="panel"><h2>Appointment list</h2><div class="table-wrap"><table><tr><th>Date</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th></tr>'; foreach($rows as $r) echo '<tr><td>'.e($r['appointment_date']).'</td><td>'.e($r['patient']).'</td><td>'.e($r['doctor']).'</td><td>'.e($r['reason']).'</td><td>'.e($r['status']).'</td></tr>'; echo '</table></div></section>'; page_end();
