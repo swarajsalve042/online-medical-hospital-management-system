@@ -1,5 +1,7 @@
 # Online Medical & Hospital Management System
 
+[![PHP Syntax Validation](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml/badge.svg)](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml)
+
 A PHP and MySQL web application demonstrating common hospital administration workflows: patient registration, doctor directory, appointments, medical descriptions/visit notes, billing, payment status, and summary reporting.
 
 > **Portfolio/demo project.** This is a learning application, not a certified Electronic Health Record (EHR), medical device, accounting system, or production-ready hospital platform. Use fictional data only. Do not enter real patient information.
@@ -16,6 +18,27 @@ A PHP and MySQL web application demonstrating common hospital administration wor
 - Reports showing record counts and paid/pending invoice totals.
 - MySQL persistence through PDO prepared statements.
 - CSRF tokens on write forms and HTML output escaping.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    A[Hospital Staff] --> B[PHP Web Interface]
+    B --> C[Session Authentication]
+    C --> D[Application Modules]
+    D --> P[Patient Records]
+    D --> DOC[Doctor Directory]
+    D --> AP[Appointments]
+    D --> MN[Medical Descriptions]
+    D --> BI[Billing and Payments]
+    D --> R[Administration Reports]
+    P --> DB[(MySQL Database)]
+    DOC --> DB
+    AP --> DB
+    MN --> DB
+    BI --> DB
+    R --> DB
+```
 
 ## Technology
 PHP 8.1+, MySQL 8.0+/MariaDB, PDO, HTML5, CSS3.
@@ -48,4 +71,4 @@ A GitHub Actions workflow is configured to run PHP syntax checks on pushes and p
 - Before production use, add role/record-level authorization, audit logs, HTTPS, secret management, encrypted backups, retention controls, dependency review, and independent security/privacy assessment.
 - This repository does not claim compliance with any healthcare privacy regulation.
 
-See [SECURITY.md](SECURITY.md), [architecture](docs/architecture.md), and [manual test plan](tests/manual-test-plan.md).
+See [SECURITY.md](SECURITY.md), [architecture](docs/architecture.md), [portfolio evidence and screenshot guide](docs/portfolio-evidence.md), and [manual test plan](tests/manual-test-plan.md).
