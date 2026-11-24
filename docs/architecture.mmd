@@ -1,0 +1,16 @@
+flowchart TD
+    A[Hospital Staff] --> B[PHP Web Interface]
+    B --> C[Session Authentication]
+    C --> D[Application Modules]
+    D --> P[Patient Records]
+    D --> DOC[Doctor Directory]
+    D --> AP[Appointments]
+    D --> MN[Medical Descriptions]
+    D --> BI[Billing and Payments]
+    D --> R[Administration Reports]
+    P --> DB[(MySQL Database)]
+    DOC --> DB
+    AP --> DB
+    MN --> DB
+    BI --> DB
+    R --> DB
