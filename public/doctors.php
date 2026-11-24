@@ -1,0 +1,6 @@
+<?php
+require __DIR__ . '/../app/bootstrap.php'; require_login();
+if ($_SERVER['REQUEST_METHOD']==='POST') { verify_csrf(); $n=trim((string)($_POST['full_name']??'')); $sp=trim((string)($_POST['specialty']??'')); $ph=trim((string)($_POST['phone']??'')); if($n===''||$sp==='') flash('Name and specialty are required.','error'); else { $s=$pdo->prepare('INSERT INTO doctors(full_name,specialty,phone) VALUES(?,?,?)'); $s->execute([$n,$sp,$ph?:null]); flash('Doctor added.'); } header('Location: doctors.php'); exit; }
+page_start('Doctors'); show_flash();
+echo '<section class="panel"><h2>Add doctor</h2><form method="post" class="form-grid"><input type="hidden" name="csrf" value="'.e(csrf_token()).'"><label>Full name<input name="full_name" required maxlength="120"></label><label>Specialty<input name="specialty" required maxlength="120"></label><label>Phone<input name="phone" maxlength="30"></label><button>Add doctor</button></form></section>';
+$rows=$pdo->query('SELECT * FROM doctors ORDER BY full_name')->fetchAll(); echo '<section class="panel"><h2>Doctor directory</h2><div class="table-wrap"><table><tr><th>Name</th><th>Specialty</th><th>Phone</th></tr>'; foreach($rows as $r) echo '<tr><td>'.e($r['full_name']).'</td><td>'.e($r['specialty']).'</td><td>'.e($r['phone']).'</td></tr>'; echo '</table></div></section>'; page_end();
