@@ -47,12 +47,27 @@ jobs:
           mysql -h127.0.0.1 -uroot -ptest < database/schema.sql
       - name: Seed fictional test records
         run: |
-          mysql -h127.0.0.1 -uroot -ptest hospital_management <<'SQL'
-          INSERT INTO staff_users(name,email,password_hash,role)
-          VALUES('CI Test Admin','ci-admin@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'admin');
-          INSERT INTO patients(full_name,phone,gender) VALUES('CI Fictional Patient','0000000000','Prefer not to say');
-          INSERT INTO doctors(full_name,specialty) VALUES('CI Test Doctor','General Medicine');
-          SQL
+          php <<'PHP'
+          <?php
+          $pdo = new PDO(
+              'mysql:host=127.0.0.1;dbname=hospital_management;charset=utf8mb4',
+              'root',
+              'test',
+              [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+          );
+          $staff = $pdo->prepare(
+              'INSERT INTO staff_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
+          );
+          $staff->execute([
+              'CI Test Admin',
+              'ci-admin@example.test',
+              password_hash('password', PASSWORD_DEFAULT),
+              'admin',
+          ]);
+          $pdo->exec("INSERT INTO patients(full_name,phone,gender) VALUES('CI Fictional Patient','0000000000','Prefer not to say')");
+          $pdo->exec("INSERT INTO doctors(full_name,specialty) VALUES('CI Test Doctor','General Medicine')");
+          echo "Seeded CI-only fictional records and generated a matching password hash.\\n";
+          PHP
       - name: Start PHP development server
         run: |
           php -S 127.0.0.1:8080 -t public > /tmp/caredesk-php.log 2>&1 &
