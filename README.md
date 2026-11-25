@@ -62,7 +62,7 @@ PHP 8.1+, MySQL 8.0+/MariaDB, PDO, HTML5, CSS3.
 - `.github/workflows/` — PHP syntax validation workflow.
 
 ## Verification
-A GitHub Actions workflow is configured to run PHP syntax checks on pushes and pull requests. Runtime behavior still requires testing in a PHP/MySQL environment. No successful workflow run, live deployment, or database execution is claimed until verified.
+GitHub Actions runs PHP syntax validation and a MySQL-backed HTTP integration suite on pushes and pull requests. The integration suite creates a temporary MySQL database, seeds fictional records, verifies staff login, exercises patient and doctor creation, appointment scheduling, medical-note creation, invoice creation/payment updates, report totals, CSRF rejection, and logout/protected-page behavior. Latest successful checks: [PHP syntax validation](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/runs/45572685243) and [PHP/MySQL integration tests](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/runs/45572685186). These are CI test results, not a live deployment or production-readiness claim.
 
 ## Security and limitations
 - Never commit `config/database.php`, real credentials, or real patient data.
