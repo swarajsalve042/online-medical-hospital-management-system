@@ -32,6 +32,17 @@ TOKEN=$(grep -o 'name="csrf" value="[^"]*"' "$PAGE" | head -n1 | sed 's/.*value=
 [ -n "$TOKEN" ] || fail "Could not read login CSRF token"
 pass "Login page and CSRF token"
 
+# Invalid staff credentials must not create an authenticated session
+STATUS=$(curl -sS -o "$RESPONSE" -w '%{http_code}' -b "$COOKIE_JAR" -c "$COOKIE_JAR" -X POST "$BASE_URL/login.php" \
+  --data-urlencode "csrf=$TOKEN" \
+  --data-urlencode "email=ci-admin@example.test" \
+  --data-urlencode "password=wrong-password")
+[ "$STATUS" = "200" ] || fail "Invalid login expected HTTP 200 with an error, got $STATUS"
+grep -q "Invalid email or password" "$RESPONSE" || fail "Invalid login error message was not shown"
+STATUS=$(curl -sS -o /dev/null -w '%{http_code}' -b "$COOKIE_JAR" "$BASE_URL/dashboard.php")
+[ "$STATUS" = "302" ] || fail "Invalid login must not authenticate; dashboard expected HTTP 302, got $STATUS"
+pass "Invalid staff credentials rejected without creating a session"
+
 # Valid staff login
 post_expect_redirect "login.php" \
   --data-urlencode "csrf=$TOKEN" \
