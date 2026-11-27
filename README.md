@@ -1,5 +1,8 @@
 # Online Medical & Hospital Management System
 
+[![php lint](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml/badge.svg)](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml)
+[![php mysql integration](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-mysql-integration.yml/badge.svg)](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-mysql-integration.yml)
+
 [![PHP Syntax Validation](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml/badge.svg)](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/workflows/php-lint.yml)
 
 A PHP and MySQL web application demonstrating common hospital administration workflows: patient registration, doctor directory, appointments, medical descriptions/visit notes, billing, payment status, and summary reporting.
@@ -72,3 +75,11 @@ GitHub Actions runs PHP syntax validation and a MySQL-backed HTTP integration su
 - This repository does not claim compliance with any healthcare privacy regulation.
 
 See [SECURITY.md](SECURITY.md), [architecture](docs/architecture.md), [portfolio evidence and screenshot guide](docs/portfolio-evidence.md), and [manual test plan](tests/manual-test-plan.md).
+
+
+## Latest automated verification (25 November 2026)
+
+- [PHP syntax validation — successful GitHub Actions run](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/runs/45573917684)
+- [PHP/MySQL integration tests — successful GitHub Actions run](https://github.com/swarajsalve042/online-medical-hospital-management-system/actions/runs/45573917302)
+
+These links document automated checks only; they do not imply production deployment or manual end-user acceptance testing.
